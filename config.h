@@ -12,6 +12,10 @@
 #define MQTT_TOPIC_NAME_LEVEL_LITERS "cistern/level/liters"
 #define MQTT_TOPIC_NAME_LEVEL_CM "cistern/level/cm"
 
+// defines pins numbers
+#define TRIGGER_PIN 5  //~D1
+#define ECHO_PIN 4     //~D2
+
 #define SENSOR_DISTANCE_TO_MAX_VOLUME 21        // in cm - minimum is 21
 
 #define TIME_PERIOD_BETWEEN_READINGS 60   // in seconds

@@ -5,9 +5,6 @@
 #include <ArduinoOTA.h>
 
 #define SERIAL_BAUDRATE                 115200
-// defines pins numbers
-const int trigPin = 5;  //~D1
-const int echoPin = 4;  //~D2
 
 const double pi = 3.14159265359;
 const double r = CISTERN_HEIGHT / 2.0;
@@ -88,8 +85,8 @@ void setMaxVolume(){
 
 void setup() {
 
-    pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
-    pinMode(echoPin, INPUT); // Sets the echoPin as an Input
+    pinMode(TRIGGER_PIN, OUTPUT); // Sets the trigPin as an Output
+    pinMode(ECHO_PIN, INPUT); // Sets the echoPin as an Input
 
     // Init serial port and clean garbage
     Serial.begin(SERIAL_BAUDRATE);
@@ -101,7 +98,7 @@ void setup() {
     
     // MQTT
     client.setServer(MQTT_SERVER_IP, MQTT_SERVER_PORT);
-    digitalWrite(trigPin, LOW);
+    digitalWrite(TRIGGER_PIN, LOW);
     delay(2);
 
     setMaxVolume();
@@ -135,13 +132,13 @@ int getDistanceFromSensor(){
   int distance;
     
     
-   // Sets the trigPin on HIGH state for 15 micro seconds
-    digitalWrite(trigPin, HIGH);
+   // Sets the TRIGGER_PIN on HIGH state for 15 micro seconds
+    digitalWrite(TRIGGER_PIN, HIGH);
     delayMicroseconds(TRIGGER_PULSE_WIDTH);
-    digitalWrite(trigPin, LOW);
+    digitalWrite(TRIGGER_PIN, LOW);
     
-    // Reads the echoPin, returns the sound wave travel time in microseconds
-    duration = pulseIn(echoPin, HIGH,READING_TIMEOUT*1000);
+    // Reads the ECHO_PIN, returns the sound wave travel time in microseconds
+    duration = pulseIn(ECHO_PIN, HIGH,READING_TIMEOUT*1000);
     
     // Calculating the distance
     distance= duration*0.034/2;
@@ -228,5 +225,5 @@ void loop() {
     }
     client.loop();
     ArduinoOTA.handle();
-    delay(1000);
+    delay(1000 * TIME_PERIOD_BETWEEN_READINGS);
 }
