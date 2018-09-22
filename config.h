@@ -16,9 +16,10 @@
 #define TRIGGER_PIN 5  //~D1
 #define ECHO_PIN 4     //~D2
 
-#define SENSOR_DISTANCE_TO_MAX_VOLUME 21        // in cm - minimum is 21
+#define SENSOR_DISTANCE_TO_MAX_VOLUME 0        // in cm - minimum is 21
 
-#define TIME_PERIOD_BETWEEN_READINGS 60   // in seconds
+#define TIME_PERIOD_BETWEEN_READINGS 30   // in seconds
+#define SAMPLE_SIZE 5
 
 #define CISTERN_HEIGHT 150      // in cm
 #define CISTERN_LENGTH 225      // in cm

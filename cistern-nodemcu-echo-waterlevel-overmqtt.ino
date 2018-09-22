@@ -3,6 +3,10 @@
 #include "config.h"
 #include <PubSubClient.h>
 #include <ArduinoOTA.h>
+#include "helper.h"
+#include <vector>
+
+using namespace std;
 
 #define SERIAL_BAUDRATE                 115200
 
@@ -147,83 +151,47 @@ int getDistanceFromSensor(){
     return distance;
    }
    
-int getWaterlevel(){
-  int waterlevel = getDistanceFromSensor();
-  while (waterlevel  < SENSOR_DISTANCE_TO_MAX_VOLUME || waterlevel > CISTERN_HEIGHT + SENSOR_DISTANCE_TO_MAX_VOLUME +2 ){
-    Serial.println("Wrong Reading... repeating...");
+vector<int> getWaterlevel(){
+  size_t size = SAMPLE_SIZE;
+  vector<int> readings(size);
+  
+  for(int i = 0; i<size;i++){
+    int waterlevel = getDistanceFromSensor();
+    while (waterlevel  < SENSOR_DISTANCE_TO_MAX_VOLUME || waterlevel > CISTERN_HEIGHT + SENSOR_DISTANCE_TO_MAX_VOLUME +2 ){
+      Serial.println("Wrong Reading... repeating...");
+      delay(300);
+      waterlevel = getDistanceFromSensor();
+    }
+    readings[i]= waterlevel - SENSOR_DISTANCE_TO_MAX_VOLUME;
     delay(300);
-    waterlevel = getDistanceFromSensor();
   }
-  return waterlevel - SENSOR_DISTANCE_TO_MAX_VOLUME;
+  return readings;
 }
-
-double getAlpha(int h){
-  double dH = (double)(h);
-  Serial.printf("h: %2f ", dH);
-  
-  double cosAkHptn = (r-dH)/dH;
-  Serial.printf("cosAkHptn: %2f ", cosAkHptn);
-  double alpha = (2*acos((r-dH)/r));
-  Serial.printf("alpha(rad): %2f ", alpha);
-  return alpha;
-  }
-
-double getSurface(int iH){
-  double h = (double)iH;
-  
-  // formula for surface
-  // A=r²/2 * (alpha(rad) sin alpha(rad))
-  double alpha = getAlpha(iH);
-  double surface = r*r/2 * (alpha - sin(alpha));
-  Serial.printf("surface: %2f ", surface);
-  return surface;
-  }
-
-int getVolume(double surface){
-  double volume = (surface*CISTERN_LENGTH/1000.0);
-  Serial.printf("volume: %2fl ", volume);
-  return (int)volume;
-  }
-
-int getLevel(int volume){
-  int level = (int)(maxVolume - volume);
-  Serial.printf("level: %d ", level);
-  return level;
-  }
-
-double levelPercent(int level){
-  double percent = (double)level / maxVolume *100.0;
-  Serial.printf("percent: %1f\n", percent);
-  return percent;
-  }
 
 
 void loop() {   
     ensureMQTTConnection();
-
-    int waterlevel = getWaterlevel();
-    char cdist[16];
-    itoa(waterlevel, cdist, 10);
-    client.publish(MQTT_TOPIC_NAME_LEVEL_CM, cdist);
-
-    int volume = getVolume(getSurface(waterlevel));
- 
-    int level = getLevel(volume);
-    char cFul[16];
-    itoa(level, cFul, 10);
-    client.publish(MQTT_TOPIC_NAME_LEVEL_LITERS, cFul);
-
-    double percent = levelPercent(level);
-    char cPro[16];
-    itoa((int)percent, cPro, 10);
-    client.publish(MQTT_TOPIC_NAME_LEVEL_PERCENT, cPro);
-  
     static unsigned long last = millis();
-    if (millis() - last > 5000) {
+    if (millis() - last >= TIME_PERIOD_BETWEEN_READINGS *1000) {
         last = millis();
-        Serial.printf("[MAIN] Free heap: %d bytes\n", ESP.getFreeHeap());
+        int waterlevel = filteredResult(getWaterlevel());
+        char cdist[16];
+        itoa(waterlevel, cdist, 10);
+        client.publish(MQTT_TOPIC_NAME_LEVEL_CM, cdist);
+    
+        int volume = getVolume(getSurface(waterlevel));
+     
+        int level = getLevel(volume, maxVolume);
+        char cFul[16];
+        itoa(level, cFul, 10);
+        client.publish(MQTT_TOPIC_NAME_LEVEL_LITERS, cFul);
+    
+        double percent = levelPercent(level, maxVolume);
+        char cPro[16];
+        itoa((int)percent, cPro, 10);
+        client.publish(MQTT_TOPIC_NAME_LEVEL_PERCENT, cPro);
     }
     client.loop();
     ArduinoOTA.handle();
-    delay(1000 * TIME_PERIOD_BETWEEN_READINGS);
+    delay(1000);
 }
