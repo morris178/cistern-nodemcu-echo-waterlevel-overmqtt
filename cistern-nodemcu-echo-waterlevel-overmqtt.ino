@@ -145,7 +145,7 @@ int getDistanceFromSensor(){
     duration = pulseIn(ECHO_PIN, HIGH,READING_TIMEOUT*1000);
     
     // Calculating the distance
-    distance= duration*0.034/2;
+    distance= duration*0.034/2 + SENSOR_OFFSET;
 
 
     return distance;
@@ -163,7 +163,7 @@ vector<int> getWaterlevel(){
       waterlevel = getDistanceFromSensor();
     }
     readings[i]= waterlevel - SENSOR_DISTANCE_TO_MAX_VOLUME;
-    delay(300);
+    delay(TIME_BETWEEN_READINGS);
   }
   return readings;
 }
@@ -172,7 +172,7 @@ vector<int> getWaterlevel(){
 void loop() {   
     ensureMQTTConnection();
     static unsigned long last = millis();
-    if (millis() - last >= TIME_PERIOD_BETWEEN_READINGS *1000) {
+    if (millis() - last >= IDLE_TIME *1000) {
         last = millis();
         int waterlevel = filteredResult(getWaterlevel());
         char cdist[16];
