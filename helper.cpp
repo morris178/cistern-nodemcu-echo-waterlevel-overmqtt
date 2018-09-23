@@ -43,25 +43,30 @@ double levelPercent(int level, double maxVolume){
   }
 
 
-int filteredResult(vector<int> dataset){
+vector<int> filteredResult(vector<int> dataset){
   int datasetLength = dataset.size();
-  int fR = -1;
+  vector<int> reducedDataset;
   for (int i = 0; i < datasetLength; i++){
     int meanOfAllButThisOne = getMeanOfAllButOne(i, dataset);
     int deviance = getDeviance(i, meanOfAllButThisOne, dataset);
     printf("deviance: %d ", deviance);
     if(deviance > 25){
       printf("Filtered Result : %d", getMeanOfAllButOne(i, dataset));
-      return getMeanOfAllButOne(i, dataset);
-      break;
+      reducedDataset.push_back(getMeanOfAllButOne(i, dataset));
+      for(int j=i+1; j< datasetLength; j++){
+        reducedDataset[j] = dataset[j]; 
       }
-  }if(fR > CISTERN_HEIGHT){
-    fR = CISTERN_HEIGHT;
-  }else{
-    fR = getMean(dataset);
+      return filteredResult(reducedDataset);
+    }
+    else{
+      if(dataset[i] > CISTERN_HEIGHT){
+        dataset[i] = CISTERN_HEIGHT;
+      }
+      
+      reducedDataset.push_back(dataset[i]);
+    }
+  return reducedDataset;
   }
-  printf("Filtered Result : %d", fR);
-  return fR;
 }
 
 int getDeviance(int index, int mean, vector<int> dataset){

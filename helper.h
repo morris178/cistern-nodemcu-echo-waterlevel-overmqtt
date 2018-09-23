@@ -14,5 +14,5 @@ double levelPercent(int level, double maxVolume);
 int getMeanOfAllButOne(int excludedIndex, vector<int> dataset);
 int getMean(vector<int> dataset);
 int getDeviance(int index, int mean, vector<int> dataset);
-int filteredResult(vector<int> dataset);
+vector<int> filteredResult(vector<int> dataset);
 #endif
