@@ -13,7 +13,7 @@ test(filterResultTest1)
   dataset.push_back(149);
   dataset.push_back(151);
   dataset.push_back(151);
-  assertEqual(filteredResult(dataset), 150);
+  assertEqual(getMean(filteredResult(dataset)), 150);
 }
 
 test(filterResultTest2)
@@ -25,7 +25,25 @@ test(filterResultTest2)
   dataset.push_back(90);
   dataset.push_back(90);
   dataset.push_back(90);
-  assertEqual(filteredResult(dataset), 90);
+  assertEqual(getMean(filteredResult(dataset)), 90);
+}
+
+test(filterResultTest3)
+{
+  vector<int> dataset; 
+  dataset.push_back(90);
+  dataset.push_back(91);
+  dataset.push_back(56);
+  dataset.push_back(90);
+  dataset.push_back(56);
+  dataset.push_back(90);
+  dataset.push_back(90);
+  dataset.push_back(90);
+  dataset.push_back(56);
+  dataset.push_back(90);
+  dataset.push_back(90);
+  dataset.push_back(90);  
+  assertEqual(getMean(filteredResult(dataset)), 90);
 }
 
 test(alphaPositiveIfReadingExceedsMaxHeight){
