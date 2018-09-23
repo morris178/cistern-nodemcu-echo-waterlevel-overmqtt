@@ -1,2 +1,6 @@
 
 *.fox
+
+cistern-nodemcu-echo-waterlevel-overmqtt\.ino\.main
+
+*.main
