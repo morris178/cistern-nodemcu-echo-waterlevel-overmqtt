@@ -163,7 +163,7 @@ vector<int> getWaterlevel(){
       waterlevel = getDistanceFromSensor();
     }
     readings[i]= waterlevel - SENSOR_DISTANCE_TO_MAX_VOLUME;
-    delay(TIME_BETWEEN_READINGS);
+    delay(TIME_PERIOD_BETWEEN_READINGS);
   }
   return readings;
 }
@@ -174,7 +174,7 @@ void loop() {
     static unsigned long last = millis();
     if (millis() - last >= IDLE_TIME *1000) {
         last = millis();
-        int waterlevel = filteredResult(getWaterlevel());
+        int waterlevel = getMean(filteredResult(getWaterlevel()));
         char cdist[16];
         itoa(waterlevel, cdist, 10);
         client.publish(MQTT_TOPIC_NAME_LEVEL_CM, cdist);
