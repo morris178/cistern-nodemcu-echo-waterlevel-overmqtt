@@ -19,7 +19,7 @@
 #define SENSOR_OFFSET 3                         // use ruler and the mqtt topic cistern/level/cm to calibrate this value
 
 
-#define IDLE_TIME 30                      // in seconds
+#define IDLE_TIME 180                      // in seconds
 
 #define TIME_PERIOD_BETWEEN_READINGS 1   // in seconds
 #define SAMPLE_SIZE 10
