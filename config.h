@@ -12,13 +12,17 @@
 #define MQTT_TOPIC_NAME_LEVEL_LITERS "cistern/level/liters"
 #define MQTT_TOPIC_NAME_LEVEL_CM "cistern/level/cm"
 
-// defines pins numbers
 #define TRIGGER_PIN 5  //~D1
 #define ECHO_PIN 4     //~D2
 
-#define SENSOR_DISTANCE_TO_MAX_VOLUME 21        // in cm - minimum is 21
+#define SENSOR_DISTANCE_TO_MAX_VOLUME 0        // in cm - minimum is 21
+#define SENSOR_OFFSET 3                         // use ruler and the mqtt topic cistern/level/cm to calibrate this value
 
-#define TIME_PERIOD_BETWEEN_READINGS 60   // in seconds
+
+#define IDLE_TIME 180                      // in seconds
+
+#define TIME_PERIOD_BETWEEN_READINGS 1   // in seconds
+#define SAMPLE_SIZE 10
 
 #define CISTERN_HEIGHT 150      // in cm
 #define CISTERN_LENGTH 225      // in cm
